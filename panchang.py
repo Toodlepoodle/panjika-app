@@ -180,6 +180,7 @@ def get_sunrise_sunset(date, lat, lon, tz_name="Asia/Kolkata"):
         return None, None
 
 
+<<<<<<< HEAD
 def _sidereal_sun_rashi_index(local_noon_dt, tz):
     """
     Return the sidereal zodiac sign index (0=Mesha/Aries ... 11=Meena/Pisces)
@@ -235,6 +236,49 @@ def gregorian_to_bengali_date(greg_date, tz_name="Asia/Kolkata"):
     return {
         "bengali_year": bengali_year,
         "month": BENGALI_MONTHS[current_rashi],
+=======
+def gregorian_to_bengali_date(greg_date):
+    """
+    Approximate Bengali calendar conversion.
+    Poila Boishakh (Bengali New Year) falls on April 14 (sometimes 15).
+    This is a simplified solar-calendar approximation, not minute-perfect
+    against a specific printed panjika's exact sankranti moments.
+    """
+    year = greg_date.year
+    # Bengali new year reference: April 14
+    new_year_this_year = datetime(year, 4, 14)
+
+    if greg_date >= new_year_this_year:
+        bengali_year = year - 593
+        days_since_new_year = (greg_date - new_year_this_year).days
+    else:
+        bengali_year = year - 594
+        prev_new_year = datetime(year - 1, 4, 14)
+        days_since_new_year = (greg_date - prev_new_year).days
+
+    # Bengali month lengths (approx, solar months): first 5 months have 31 days,
+    # remaining 7 have 30 days (adjusts for leap year in Falgun)
+    month_lengths = [31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 30, 30]
+
+    remaining = days_since_new_year
+    month_idx = 0
+    for i, length in enumerate(month_lengths):
+        if remaining < length:
+            month_idx = i
+            break
+        remaining -= length
+        month_idx = i + 1
+
+    if month_idx >= 12:
+        month_idx = 11
+        day_of_month = remaining + 1
+    else:
+        day_of_month = remaining + 1
+
+    return {
+        "bengali_year": bengali_year,
+        "month": BENGALI_MONTHS[month_idx],
+>>>>>>> origin/main
         "day": day_of_month
     }
 
@@ -258,6 +302,7 @@ def get_full_panchang(date, lat=22.5726, lon=88.3639, tz_name="Asia/Kolkata"):
     yoga = get_yoga(dt_utc)
     karana = get_karana(dt_utc)
     sunrise, sunset = get_sunrise_sunset(local_dt.date(), lat, lon, tz_name)
+<<<<<<< HEAD
     bengali_date = gregorian_to_bengali_date(local_dt.replace(tzinfo=None), tz_name=tz_name)
     weekday_bn = WEEKDAYS_BN[(local_dt.weekday() + 1) % 7]
     moon_rashi = get_moon_rashi(dt_utc)
@@ -265,6 +310,10 @@ def get_full_panchang(date, lat=22.5726, lon=88.3639, tz_name="Asia/Kolkata"):
     abhijit_start, abhijit_end = get_abhijit_muhurat(sunrise, sunset)
     ekadashi = get_ekadashi_info(tithi["number"])
     horoscope = get_horoscope(moon_rashi["number"] - 1, local_dt.date())
+=======
+    bengali_date = gregorian_to_bengali_date(local_dt.replace(tzinfo=None))
+    weekday_bn = WEEKDAYS_BN[(local_dt.weekday() + 1) % 7]
+>>>>>>> origin/main
 
     return {
         "gregorian_date": local_dt.strftime("%Y-%m-%d"),
@@ -277,6 +326,7 @@ def get_full_panchang(date, lat=22.5726, lon=88.3639, tz_name="Asia/Kolkata"):
         "karana": karana,
         "sunrise": sunrise,
         "sunset": sunset,
+<<<<<<< HEAD
         "moon_rashi": moon_rashi,
         "rahu_kaal": {"start": rahu_start, "end": rahu_end},
         "abhijit_muhurat": {"start": abhijit_start, "end": abhijit_end},
@@ -413,6 +463,11 @@ CITIES = {
 }
 
 
+=======
+    }
+
+
+>>>>>>> origin/main
 # ---- Festival dataset ----
 # Major Bengali Hindu festivals for 2026, verified against West Bengal government
 # holiday lists and Bengali panjika sources (Oct 2026). Note: Durga Puja day-by-day

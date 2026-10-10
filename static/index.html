@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<<<<<<< HEAD
 <title>পঞ্জিকা — আজকের পঞ্জিকা</title>
+=======
+<title>Panjika — আজকের পঞ্জিকা</title>
+>>>>>>> origin/main
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#7a2e2e">
 <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Tiro+Bangla&display=swap" rel="stylesheet">
@@ -17,6 +21,7 @@
     --text-soft: #6b5f56;
     --card-bg: #ffffff;
     --border: #ecdfc9;
+<<<<<<< HEAD
     --danger-bg: #fdeceb;
     --danger-text: #a8402f;
   }
@@ -31,6 +36,8 @@
     --border: #3d332b;
     --danger-bg: #3a2420;
     --danger-text: #e68a79;
+=======
+>>>>>>> origin/main
   }
   * { box-sizing: border-box; }
   html, body {
@@ -40,11 +47,15 @@
     font-family: 'Hind Siliguri', 'Tiro Bangla', sans-serif;
     padding-top: env(safe-area-inset-top, 0px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
+<<<<<<< HEAD
     transition: background 0.2s, color 0.2s;
+=======
+>>>>>>> origin/main
   }
   .header {
     background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
     color: var(--cream);
+<<<<<<< HEAD
     padding: 20px 16px 20px;
     position: relative;
     overflow: visible;
@@ -52,12 +63,20 @@
   }
   .header::before { pointer-events: none; z-index: -1; }
   [data-theme="dark"] .header { color: #f3ece2; }
+=======
+    padding: 28px 20px 24px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+>>>>>>> origin/main
   .header::before {
     content: "";
     position: absolute; inset: 0;
     background-image: radial-gradient(circle at 20% 30%, rgba(200,155,60,0.15) 0%, transparent 40%),
                        radial-gradient(circle at 80% 70%, rgba(200,155,60,0.12) 0%, transparent 40%);
   }
+<<<<<<< HEAD
   .header-top {
     display: flex;
     justify-content: space-between;
@@ -91,6 +110,20 @@
   .city-search { width:100%; padding:10px; margin-bottom:5px; border:1px solid var(--border); border-radius:8px; background:var(--cream); color:var(--text); font:inherit; }
   .city-option { display:block; width:100%; padding:10px; border:0; border-radius:8px; background:transparent; color:var(--text); font:inherit; text-align:left; cursor:pointer; }
   .city-option:hover,.city-option[aria-selected="true"] { background:var(--danger-bg); color:var(--maroon); }
+=======
+  .header h1 {
+    margin: 0 0 4px;
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    position: relative;
+  }
+  .header .sub {
+    font-size: 0.85rem;
+    opacity: 0.85;
+    position: relative;
+  }
+>>>>>>> origin/main
   .container { max-width: 480px; margin: 0 auto; padding: 16px; }
   .big-date-card {
     background: var(--card-bg);
@@ -146,7 +179,10 @@
     font-weight: 600;
     color: var(--maroon-dark);
   }
+<<<<<<< HEAD
   [data-theme="dark"] .stat-value { color: var(--gold); }
+=======
+>>>>>>> origin/main
   .stat-detail {
     font-size: 0.75rem;
     color: var(--text-soft);
@@ -164,7 +200,10 @@
   .sun-item { text-align: center; }
   .sun-item .label { font-size: 0.7rem; color: var(--text-soft); }
   .sun-item .value { font-size: 1rem; font-weight: 600; color: var(--maroon-dark); }
+<<<<<<< HEAD
   [data-theme="dark"] .sun-item .value { color: var(--gold); }
+=======
+>>>>>>> origin/main
   .nav-row {
     display: flex;
     justify-content: space-between;
@@ -180,6 +219,7 @@
     border-radius: 50%;
     cursor: pointer;
   }
+<<<<<<< HEAD
   [data-theme="dark"] .nav-btn { color: var(--gold); }
   .loading { text-align: center; padding: 40px; color: var(--text-soft); }
   footer {
@@ -188,6 +228,14 @@
     color: var(--text-soft);
     padding: 20px 20px 40px;
     line-height: 1.5;
+=======
+  .loading { text-align: center; padding: 40px; color: var(--text-soft); }
+  footer {
+    text-align: center;
+    font-size: 0.7rem;
+    color: var(--text-soft);
+    padding: 24px 16px 40px;
+>>>>>>> origin/main
   }
   .tabs {
     display: flex;
@@ -220,6 +268,7 @@
     font-size: 0.85rem;
     font-weight: 600;
     text-align: center;
+<<<<<<< HEAD
     cursor: pointer;
   }
   .ekadashi-banner {
@@ -289,6 +338,9 @@
     font-family: inherit;
   }
   [data-theme="dark"] .share-btn { color: var(--gold); }
+=======
+  }
+>>>>>>> origin/main
   .month-header {
     display: flex;
     justify-content: space-between;
@@ -296,7 +348,10 @@
     margin: 14px 0 10px;
   }
   .month-header .label { font-weight: 700; color: var(--maroon-dark); font-size: 1.05rem; }
+<<<<<<< HEAD
   [data-theme="dark"] .month-header .label { color: var(--gold); }
+=======
+>>>>>>> origin/main
   .month-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -317,12 +372,17 @@
     min-height: 54px;
     position: relative;
   }
+<<<<<<< HEAD
   .day-cell.festival { border-color: var(--gold); background: var(--danger-bg); background: #fff8e8; }
   [data-theme="dark"] .day-cell.festival { background: #332a16; }
+=======
+  .day-cell.festival { border-color: var(--gold); background: #fff8e8; }
+>>>>>>> origin/main
   .day-cell .greg { font-size: 0.8rem; font-weight: 700; color: var(--text); }
   .day-cell .bn { font-size: 0.6rem; color: var(--text-soft); margin-top: 1px; line-height: 1.1; }
   .day-cell .dot { position: absolute; top: 3px; right: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
   .empty-cell { visibility: hidden; }
+<<<<<<< HEAD
   .modal-overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.5);
@@ -391,10 +451,13 @@
   .search-empty { text-align:center; padding:24px 12px; color:var(--text-soft); background:var(--card-bg); border:1px dashed var(--border); border-radius:13px; }
   .search-tab { white-space:nowrap; }
 
+=======
+>>>>>>> origin/main
 </style>
 </head>
 <body>
   <div class="header">
+<<<<<<< HEAD
     <div class="header-top">
       <div>
         <h1>পঞ্জিকা</h1>
@@ -412,10 +475,15 @@
         <div id="city-options"></div>
       </div>
     </div>
+=======
+    <h1>পঞ্জিকা</h1>
+    <div class="sub">Bangla Panjika &amp; Panchang — Kolkata</div>
+>>>>>>> origin/main
   </div>
 
   <div class="container">
     <div class="tabs">
+<<<<<<< HEAD
       <button class="tab-btn active" id="tab-day" onclick="switchTab('day')">আজ</button>
       <button class="tab-btn" id="tab-month" onclick="switchTab('month')">মাস</button>
       <button class="tab-btn" id="tab-horoscope" onclick="switchTab('horoscope')">রাশিফল</button>
@@ -552,11 +620,26 @@ let currentDate = new Date();
 let monthCursor = new Date();
 let selectedCity = localStorage.getItem('panjika_city') || 'kolkata';
 let cityList = [];
+=======
+      <button class="tab-btn active" id="tab-day" onclick="switchTab('day')">Today</button>
+      <button class="tab-btn" id="tab-month" onclick="switchTab('month')">Month</button>
+    </div>
+    <div id="content" class="loading">Loading today's panjika…</div>
+    <div id="month-view" style="display:none"></div>
+  </div>
+
+  <footer>Calculated using Drik Siddhanta (sidereal, Lahiri ayanamsa) · Prototype build</footer>
+
+<script>
+const API = "/api/panchang";
+let currentDate = new Date();
+>>>>>>> origin/main
 
 function fmtDate(d) {
   return d.toISOString().split('T')[0];
 }
 
+<<<<<<< HEAD
 // ---- Theme ----
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', theme);
@@ -666,11 +749,43 @@ function render(data) {
     <div class="nav-row">
       <button class="nav-btn" onclick="changeDay(-1)">‹</button>
       <div style="font-size:0.85rem;color:var(--text-soft)">${t('swipeDays')}</div>
+=======
+async function loadPanchang(dateStr) {
+  const el = document.getElementById('content');
+  el.innerHTML = '<div class="loading">Loading…</div>';
+  try {
+    const res = await fetch(`${API}?date=${dateStr}`);
+    const data = await res.json();
+    render(data);
+  } catch (e) {
+    el.innerHTML = '<div class="loading">Could not load panjika. Is the backend running?</div>';
+  }
+}
+
+function render(data) {
+  const el = document.getElementById('content');
+  const bn = data.bengali_date;
+  const festivalHtml = data.festival
+    ? `<div class="festival-banner">🪔 ${data.festival}</div>`
+    : '';
+  el.innerHTML = `
+    <div class="big-date-card">
+      <div class="bengali-date">${bn.day} ${bn.month}, ${bn.bengali_year}</div>
+      <div class="gregorian-date">${data.gregorian_date} · ${data.weekday}</div>
+      <div class="weekday-pill">${data.weekday_bengali}</div>
+    </div>
+    ${festivalHtml}
+
+    <div class="nav-row">
+      <button class="nav-btn" onclick="changeDay(-1)">‹</button>
+      <div style="font-size:0.85rem;color:var(--text-soft)">Swipe days</div>
+>>>>>>> origin/main
       <button class="nav-btn" onclick="changeDay(1)">›</button>
     </div>
 
     <div class="grid">
       <div class="stat-card">
+<<<<<<< HEAD
         <div class="stat-label">${t('tithi')}</div>
         <div class="stat-value">${localized(data.tithi.name, 'tithi')}</div>
         <div class="stat-detail">${localized(data.tithi.paksha, 'paksha')} ${t('paksha')} · ${data.tithi.percent_complete}% ${t('elapsed')}</div>
@@ -687,11 +802,30 @@ function render(data) {
       <div class="stat-card">
         <div class="stat-label">${t('karana')}</div>
         <div class="stat-value">${localized(data.karana.name, 'karana')}</div>
+=======
+        <div class="stat-label">Tithi</div>
+        <div class="stat-value">${data.tithi.name}</div>
+        <div class="stat-detail">${data.tithi.paksha} Paksha · ${data.tithi.percent_complete}% elapsed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Nakshatra</div>
+        <div class="stat-value">${data.nakshatra.name}</div>
+        <div class="stat-detail">Pada ${data.nakshatra.pada}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Yoga</div>
+        <div class="stat-value">${data.yoga.name}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Karana</div>
+        <div class="stat-value">${data.karana.name}</div>
+>>>>>>> origin/main
       </div>
     </div>
 
     <div class="sun-row">
       <div class="sun-item">
+<<<<<<< HEAD
         <div class="label">${t('sunrise')}</div>
         <div class="value">${data.sunrise || '—'}</div>
       </div>
@@ -752,16 +886,35 @@ function shareDay() {
   }
 }
 
+=======
+        <div class="label">Sunrise</div>
+        <div class="value">${data.sunrise || '—'}</div>
+      </div>
+      <div class="sun-item">
+        <div class="label">Sunset</div>
+        <div class="value">${data.sunset || '—'}</div>
+      </div>
+    </div>
+  `;
+}
+
+>>>>>>> origin/main
 function changeDay(delta) {
   currentDate.setDate(currentDate.getDate() + delta);
   loadPanchang(fmtDate(currentDate));
 }
 
+<<<<<<< HEAD
+=======
+loadPanchang(fmtDate(currentDate));
+
+>>>>>>> origin/main
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 
 // ---- Tabs ----
+<<<<<<< HEAD
 function switchTab(tab) {
   ['day','month','horoscope','search'].forEach(name => {
     const button = document.getElementById(`tab-${name}`);
@@ -774,10 +927,21 @@ function switchTab(tab) {
   if (tab === 'month') loadMonth(monthCursor.getFullYear(), monthCursor.getMonth() + 1);
   if (tab === 'horoscope') renderHoroscopeView();
   if (tab === 'search') renderSearchView();
+=======
+let monthCursor = new Date();
+
+function switchTab(tab) {
+  document.getElementById('tab-day').classList.toggle('active', tab === 'day');
+  document.getElementById('tab-month').classList.toggle('active', tab === 'month');
+  document.getElementById('content').style.display = tab === 'day' ? 'block' : 'none';
+  document.getElementById('month-view').style.display = tab === 'month' ? 'block' : 'none';
+  if (tab === 'month') loadMonth(monthCursor.getFullYear(), monthCursor.getMonth() + 1);
+>>>>>>> origin/main
 }
 
 async function loadMonth(year, month) {
   const el = document.getElementById('month-view');
+<<<<<<< HEAD
   el.innerHTML = `<div class="loading">${t('loadingMonth')}</div>`;
   try {
     const res = await fetch(`${API_BASE}/api/month?year=${year}&month=${month}&city=${selectedCity}`, {cache:'no-store'});
@@ -786,14 +950,28 @@ async function loadMonth(year, month) {
     renderMonth(data);
   } catch (e) {
     el.innerHTML = `<div class="loading">${t('monthError')}</div>`;
+=======
+  el.innerHTML = '<div class="loading">Loading month…</div>';
+  try {
+    const res = await fetch(`/api/month?year=${year}&month=${month}`);
+    const data = await res.json();
+    renderMonth(data);
+  } catch (e) {
+    el.innerHTML = '<div class="loading">Could not load month view.</div>';
+>>>>>>> origin/main
   }
 }
 
 function renderMonth(data) {
   const el = document.getElementById('month-view');
   const first = new Date(data.year, data.month - 1, 1);
+<<<<<<< HEAD
   const startDow = first.getDay();
   const monthName = first.toLocaleString(currentLang === 'bn' ? 'bn-BD' : 'en-US', { month: 'long' });
+=======
+  const startDow = first.getDay(); // 0=Sun
+  const monthName = first.toLocaleString('en-US', { month: 'long' });
+>>>>>>> origin/main
 
   let cells = '';
   for (let i = 0; i < startDow; i++) cells += '<div class="day-cell empty-cell"></div>';
@@ -804,8 +982,13 @@ function renderMonth(data) {
       <div class="${cls}">
         ${day.festival ? '<div class="dot"></div>' : ''}
         <div class="greg">${parseInt(dayNum)}</div>
+<<<<<<< HEAD
         <div class="bn">${day.bengali_day} ${currentLang === 'bn' ? localized(day.bengali_month, 'months') : day.bengali_month.slice(0,3)}</div>
         <div class="bn">${localized(day.tithi, 'tithi')}</div>
+=======
+        <div class="bn">${day.bengali_day} ${day.bengali_month.slice(0,3)}</div>
+        <div class="bn">${day.tithi}</div>
+>>>>>>> origin/main
       </div>`;
   });
 
@@ -816,7 +999,12 @@ function renderMonth(data) {
       <button class="nav-btn" onclick="changeMonth(1)">›</button>
     </div>
     <div class="month-grid">
+<<<<<<< HEAD
       ${t('weekdays').map(d => `<div class="dow">${d}</div>`).join('')}
+=======
+      <div class="dow">Su</div><div class="dow">Mo</div><div class="dow">Tu</div>
+      <div class="dow">We</div><div class="dow">Th</div><div class="dow">Fr</div><div class="dow">Sa</div>
+>>>>>>> origin/main
       ${cells}
     </div>
   `;
@@ -826,6 +1014,7 @@ function changeMonth(delta) {
   monthCursor.setMonth(monthCursor.getMonth() + delta);
   loadMonth(monthCursor.getFullYear(), monthCursor.getMonth() + 1);
 }
+<<<<<<< HEAD
 
 // ---- Search all matching days in the selected future range ----
 let lastSearchData = null;
@@ -953,6 +1142,8 @@ loadCities().then(() => {
   updateCityLabel();
   loadPanchang(fmtDate(currentDate));
 });
+=======
+>>>>>>> origin/main
 </script>
 </body>
 </html>
