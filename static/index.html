@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>পঞ্জিকা — আজকের পঞ্জিকা</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#7a2e2e">
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Tiro+Bangla&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --maroon: #7a2e2e;
+    --maroon-dark: #5a1f1f;
+    --gold: #c89b3c;
+    --cream: #fdf6ec;
+    --text: #2b2320;
+    --text-soft: #6b5f56;
+    --card-bg: #ffffff;
+    --border: #ecdfc9;
+    --danger-bg: #fdeceb;
+    --danger-text: #a8402f;
+  }
+  [data-theme="dark"] {
+    --maroon: #a8453f;
+    --maroon-dark: #7a2e2e;
+    --gold: #d9ad54;
+    --cream: #1c1613;
+    --text: #efe6da;
+    --text-soft: #b3a596;
+    --card-bg: #2a221d;
+    --border: #3d332b;
+    --danger-bg: #3a2420;
+    --danger-text: #e68a79;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'Hind Siliguri', 'Tiro Bangla', sans-serif;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    transition: background 0.2s, color 0.2s;
+  }
+  .header {
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-dark));
+    color: var(--cream);
+    padding: 20px 16px 20px;
+    position: relative;
+    overflow: visible;
+    isolation: isolate;
+  }
+  .header::before { pointer-events: none; z-index: -1; }
+  [data-theme="dark"] .header { color: #f3ece2; }
+  .header::before {
+    content: "";
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 30%, rgba(200,155,60,0.15) 0%, transparent 40%),
+                       radial-gradient(circle at 80% 70%, rgba(200,155,60,0.12) 0%, transparent 40%);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+  }
+  .header h1 {
+    margin: 0 0 4px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .header .sub {
+    font-size: 0.8rem;
+    opacity: 0.85;
+  }
+  .header-icons { display: flex; gap: 8px; }
+  .icon-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: inherit;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  .city-picker { position: relative; z-index: 500; margin-top: 12px; }
+  .city-picker-button { display:flex; justify-content:space-between; align-items:center; gap:12px; width:100%; padding:11px 13px; border:1px solid rgba(255,255,255,.25); border-radius:12px; background:rgba(255,255,255,.15); color:inherit; font:inherit; font-size:.9rem; text-align:left; cursor:pointer; }
+  .city-picker-menu { display:none; position:absolute; top:calc(100% + 6px); left:0; right:0; max-height: min(55vh, 360px); overflow-y:auto; background:var(--card-bg); color:var(--text); border:1px solid var(--border); border-radius:12px; box-shadow:0 12px 30px rgba(0,0,0,.22); z-index:1000; padding:6px; }
+  .city-picker-menu.open { display:block; }
+  .city-search { width:100%; padding:10px; margin-bottom:5px; border:1px solid var(--border); border-radius:8px; background:var(--cream); color:var(--text); font:inherit; }
+  .city-option { display:block; width:100%; padding:10px; border:0; border-radius:8px; background:transparent; color:var(--text); font:inherit; text-align:left; cursor:pointer; }
+  .city-option:hover,.city-option[aria-selected="true"] { background:var(--danger-bg); color:var(--maroon); }
+  .container { max-width: 480px; margin: 0 auto; padding: 16px; }
+  .big-date-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 22px 20px;
+    margin-top: -18px;
+    position: relative;
+    box-shadow: 0 8px 24px rgba(122,46,46,0.08);
+    text-align: center;
+  }
+  .bengali-date {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--maroon);
+  }
+  .gregorian-date {
+    font-size: 0.9rem;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+  .weekday-pill {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 4px 14px;
+    background: var(--gold);
+    color: #3b2b05;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .stat-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-soft);
+    margin-bottom: 4px;
+  }
+  .stat-value {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--maroon-dark);
+  }
+  [data-theme="dark"] .stat-value { color: var(--gold); }
+  .stat-detail {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+  .sun-row {
+    display: flex;
+    justify-content: space-between;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin-top: 10px;
+  }
+  .sun-item { text-align: center; }
+  .sun-item .label { font-size: 0.7rem; color: var(--text-soft); }
+  .sun-item .value { font-size: 1rem; font-weight: 600; color: var(--maroon-dark); }
+  [data-theme="dark"] .sun-item .value { color: var(--gold); }
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+  }
+  .nav-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    color: var(--maroon);
+    font-size: 1.1rem;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  [data-theme="dark"] .nav-btn { color: var(--gold); }
+  .loading { text-align: center; padding: 40px; color: var(--text-soft); }
+  footer {
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--text-soft);
+    padding: 20px 20px 40px;
+    line-height: 1.5;
+  }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text-soft);
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .tab-btn.active {
+    background: var(--maroon);
+    color: #fff;
+    border-color: var(--maroon);
+  }
+  .festival-banner {
+    margin-top: 10px;
+    background: linear-gradient(135deg, var(--gold), #e0b85c);
+    color: #3b2b05;
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+    cursor: pointer;
+  }
+  .ekadashi-banner {
+    margin-top: 10px;
+    background: var(--danger-bg);
+    color: var(--danger-text);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-align: center;
+  }
+  .section-title {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--text-soft);
+    margin: 18px 4px 8px;
+    font-weight: 600;
+  }
+  .time-window-row {
+    display: flex;
+    gap: 10px;
+  }
+  .time-window-card {
+    flex: 1;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+  .time-window-card.warn { border-color: #d98c7a; }
+  .time-window-card .tw-label { font-size: 0.72rem; color: var(--text-soft); margin-bottom: 2px; }
+  .time-window-card .tw-value { font-size: 0.95rem; font-weight: 700; color: var(--maroon-dark); }
+  [data-theme="dark"] .time-window-card .tw-value { color: var(--gold); }
+  .time-window-card .tw-note { font-size: 0.68rem; color: var(--text-soft); margin-top: 3px; }
+  .horoscope-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .horoscope-rashi { font-weight: 700; color: var(--maroon-dark); font-size: 0.95rem; margin-bottom: 6px; }
+  [data-theme="dark"] .horoscope-rashi { color: var(--gold); }
+  .horoscope-text { font-size: 0.88rem; line-height: 1.5; }
+  .horoscope-tag {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.65rem;
+    color: var(--text-soft);
+    background: var(--cream);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .share-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px;
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--maroon);
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  [data-theme="dark"] .share-btn { color: var(--gold); }
+  .month-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 14px 0 10px;
+  }
+  .month-header .label { font-weight: 700; color: var(--maroon-dark); font-size: 1.05rem; }
+  [data-theme="dark"] .month-header .label { color: var(--gold); }
+  .month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .month-grid .dow {
+    text-align: center;
+    font-size: 0.65rem;
+    color: var(--text-soft);
+    padding-bottom: 4px;
+  }
+  .day-cell {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 4px 2px 6px;
+    text-align: center;
+    min-height: 54px;
+    position: relative;
+  }
+  .day-cell.festival { border-color: var(--gold); background: var(--danger-bg); background: #fff8e8; }
+  [data-theme="dark"] .day-cell.festival { background: #332a16; }
+  .day-cell .greg { font-size: 0.8rem; font-weight: 700; color: var(--text); }
+  .day-cell .bn { font-size: 0.6rem; color: var(--text-soft); margin-top: 1px; line-height: 1.1; }
+  .day-cell .dot { position: absolute; top: 3px; right: 4px; width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+  .empty-cell { visibility: hidden; }
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex; align-items: flex-end;
+    z-index: 100;
+  }
+  .modal-sheet {
+    background: var(--card-bg);
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    padding: 20px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  }
+  .modal-sheet h3 { margin: 0 0 8px; color: var(--maroon-dark); }
+  [data-theme="dark"] .modal-sheet h3 { color: var(--gold); }
+  .modal-close {
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px;
+    background: var(--maroon);
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .rashi-row {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    margin-bottom: 10px;
+  }
+  .rashi-chip {
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    font-size: 0.75rem;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .rashi-chip.active { background: var(--maroon); color: #fff; border-color: var(--maroon); }
+
+  .search-panel { background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:16px; margin:14px 0; box-shadow:0 6px 18px rgba(60,35,20,.05); }
+  .search-heading { margin:0 0 5px; font-size:1.15rem; color:var(--maroon); }
+  .search-help { color:var(--text-soft); font-size:.84rem; line-height:1.55; margin:0 0 12px; }
+  .day-search-form { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px; }
+  .day-search-input { width:100%; min-width:0; padding:12px 13px; border:1px solid var(--border); border-radius:11px; background:var(--cream); color:var(--text); font:inherit; }
+  .day-search-submit { border:0; border-radius:11px; background:var(--maroon); color:#fff; padding:0 16px; font:inherit; font-weight:700; cursor:pointer; }
+  .search-controls { display:flex; align-items:center; gap:8px; margin-top:9px; flex-wrap:wrap; }
+  .search-range { padding:8px 10px; border:1px solid var(--border); border-radius:9px; background:var(--cream); color:var(--text); font:inherit; }
+  .search-examples { display:flex; flex-wrap:wrap; gap:7px; margin-top:10px; }
+  .search-chip { border:1px solid var(--border); border-radius:999px; background:var(--cream); color:var(--text); padding:6px 10px; font:inherit; font-size:.78rem; cursor:pointer; }
+  .search-results-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin:18px 0 10px; }
+  .search-results-head h3 { margin:0; font-size:1rem; }
+  .search-result-list { display:grid; gap:9px; }
+  .search-result-card { background:var(--card-bg); border:1px solid var(--border); border-radius:13px; padding:13px 14px; }
+  .search-result-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+  .search-result-date { font-weight:700; color:var(--maroon); font-size:1rem; }
+  .search-result-bn { color:var(--text-soft); font-size:.84rem; margin-top:2px; }
+  .search-result-tag { display:inline-block; margin-top:8px; border-radius:999px; padding:4px 8px; background:var(--danger-bg); color:var(--danger-text); font-size:.75rem; }
+  .search-result-meta { color:var(--text-soft); font-size:.82rem; line-height:1.5; margin-top:7px; }
+  .search-note { font-size:.78rem; line-height:1.5; color:var(--text-soft); padding:10px 12px; border-left:3px solid var(--gold); background:var(--cream); border-radius:6px; margin-top:12px; }
+  .search-empty { text-align:center; padding:24px 12px; color:var(--text-soft); background:var(--card-bg); border:1px dashed var(--border); border-radius:13px; }
+  .search-tab { white-space:nowrap; }
+
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>পঞ্জিকা</h1>
+        <div class="sub">Bangla Panjika &amp; Panchang</div>
+      </div>
+      <div class="header-icons">
+        <button class="icon-btn" onclick="toggleLang()" id="lang-toggle-btn" title="Switch language" style="width:auto;padding:0 10px;font-size:0.8rem;font-weight:700;">EN</button>
+        <button class="icon-btn" onclick="toggleTheme()" id="theme-toggle-btn" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+    <div class="city-picker" id="city-picker">
+      <button class="city-picker-button" id="city-picker-button" type="button" aria-expanded="false" onclick="toggleCityMenu()"><span id="selected-city-label">স্থান নির্বাচন করুন</span><span aria-hidden="true">⌄</span></button>
+      <div class="city-picker-menu" id="city-picker-menu" role="listbox" aria-label="স্থান নির্বাচন">
+        <input class="city-search" id="city-search" type="search" placeholder="শহর খুঁজুন…" oninput="filterCities(this.value)" aria-label="শহর খুঁজুন">
+        <div id="city-options"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-day" onclick="switchTab('day')">আজ</button>
+      <button class="tab-btn" id="tab-month" onclick="switchTab('month')">মাস</button>
+      <button class="tab-btn" id="tab-horoscope" onclick="switchTab('horoscope')">রাশিফল</button>
+      <button class="tab-btn search-tab" id="tab-search" onclick="switchTab('search')">শুভ দিন খুঁজুন</button>
+    </div>
+    <div id="content" class="loading">লোড হচ্ছে…</div>
+    <div id="month-view" style="display:none"></div>
+    <div id="horoscope-view" style="display:none"></div>
+    <div id="search-view" style="display:none"></div>
+  </div>
+
+  <div id="modal-root"></div>
+
+  <footer id="app-footer">দৃক সিদ্ধান্ত ও লাহিড়ী অয়নাংশ অনুসারে পঞ্জিকার তথ্য গণনা করা হয়। অঞ্চলভেদে বাংলা তারিখে সামান্য পার্থক্য হতে পারে।</footer>
+
+<script>
+const API_BASE = "";
+
+// ---- Language (Bengali default, toggle to English) ----
+const STRINGS = {
+  bn: {
+    subtitle: "বাংলা পঞ্জিকা ও পঞ্চাঙ্গ", tabToday: "আজ", tabMonth: "মাস", tabRashifal: "রাশিফল", tabSearch: "শুভ দিন খুঁজুন",
+    swipeDays: "আগের বা পরের দিন দেখুন", tithi: "তিথি", nakshatra: "নক্ষত্র", yoga: "যোগ", karana: "করণ",
+    paksha: "পক্ষ", elapsed: "সম্পন্ন", pada: "পদ", sunrise: "সূর্যোদয়", sunset: "সূর্যাস্ত", moonRashi: "চন্দ্র রাশি",
+    timings: "সময়সূচি", rahuKaal: "রাহুকাল", abhijitMuhurat: "অভিজিৎ মুহূর্ত", abhijitNote: "প্রচলিত মতে শুভ সময়",
+    shareBtn: "আজকের পঞ্জিকা শেয়ার করুন", ekadashiToday: "একাদশী", pickRashi: "রাশি বেছে নিন",
+    loadingToday: "আজকের পঞ্জিকা লোড হচ্ছে…", loading: "লোড হচ্ছে…", loadingMonth: "মাসের তথ্য লোড হচ্ছে…",
+    loadError: "পঞ্জিকা লোড করা যায়নি। সার্ভার চালু আছে কি না দেখুন।", monthError: "মাসের তথ্য লোড করা যায়নি।",
+    close: "বন্ধ করুন", copied: "কপি করা হয়েছে", searchCity: "শহর খুঁজুন…", chooseCity: "স্থান নির্বাচন করুন",
+    footer: "দৃক সিদ্ধান্ত ও লাহিড়ী অয়নাংশ অনুসারে পঞ্জিকার তথ্য গণনা করা হয়। অঞ্চলভেদে বাংলা তারিখে সামান্য পার্থক্য হতে পারে।",
+    weekdays: ["রবি", "সোম", "মঙ্গল", "বুধ", "বৃহস্পতি", "শুক্র", "শনি"],
+    searchTitle: "কোন দিনের খোঁজ করছেন?", searchHelp: "তিথি, নক্ষত্র, উৎসব বা শুভ দিনের মতো শব্দ লিখুন। আগামী সময়ের মধ্যে মিলে যাওয়া সব দিন দেখানো হবে।", searchPlaceholder: "যেমন: শুভ দিন, একাদশী, পূর্ণিমা, দুর্গাপূজা…", searchButton: "খুঁজুন", searchRange: "কত দিনের মধ্যে", searchDays90: "আগামী ৩ মাস", searchDays180: "আগামী ৬ মাস", searchDays365: "আগামী ১ বছর", searchExamples: ["শুভ দিন", "একাদশী", "পূর্ণিমা", "অমাবস্যা", "দুর্গাপূজা"], searchIdle: "অনুসন্ধান করতে একটি শব্দ লিখুন।", searchLoading: "দিন খোঁজা হচ্ছে…", searchCount: "টি দিন পাওয়া গেছে", searchNone: "এই সময়ের মধ্যে মেলেনি। অন্য শব্দ বা দীর্ঘ সময়সীমা দিয়ে চেষ্টা করুন।", searchError: "অনুসন্ধান করা যায়নি। সার্ভার চালু আছে কি না দেখুন।", searchTithi: "তিথি", searchNakshatra: "নক্ষত্র", searchFestival: "উৎসব", searchNote: "‘শুভ দিন’ ফলাফল সাধারণভাবে শুভ বলে বিবেচিত তিথির ভিত্তিতে প্রাথমিক তালিকা। বিয়ে, গৃহপ্রবেশ বা অন্য নির্দিষ্ট কাজের পূর্ণ মুহূর্ত নির্ধারণ নয়।"
+  },
+  en: {
+    subtitle: "Bangla Panjika & Panchang", tabToday: "Today", tabMonth: "Month", tabRashifal: "Horoscope", tabSearch: "Find days",
+    swipeDays: "View previous or next day", tithi: "Tithi", nakshatra: "Nakshatra", yoga: "Yoga", karana: "Karana",
+    paksha: "Paksha", elapsed: "elapsed", pada: "Pada", sunrise: "Sunrise", sunset: "Sunset", moonRashi: "Moon sign",
+    timings: "Timings", rahuKaal: "Rahu Kaal", abhijitMuhurat: "Abhijit Muhurat", abhijitNote: "Traditionally considered auspicious",
+    shareBtn: "Share today's panjika", ekadashiToday: "Ekadashi", pickRashi: "Choose a zodiac sign",
+    loadingToday: "Loading today's panjika…", loading: "Loading…", loadingMonth: "Loading month…",
+    loadError: "Could not load panjika. Check whether the server is running.", monthError: "Could not load month data.",
+    close: "Close", copied: "Copied to clipboard", searchCity: "Search cities…", chooseCity: "Choose location",
+    footer: "Panjika details are calculated using Drik Siddhanta and Lahiri ayanamsa. Bengali dates may vary slightly by regional tradition.",
+    weekdays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    searchTitle: "What kind of day are you looking for?", searchHelp: "Search by tithi, nakshatra, festival, or a phrase such as ‘auspicious day’. All matches in the selected period will be shown.", searchPlaceholder: "Try: auspicious day, Ekadashi, Purnima, Durga Puja…", searchButton: "Search", searchRange: "Search within", searchDays90: "Next 3 months", searchDays180: "Next 6 months", searchDays365: "Next year", searchExamples: ["Auspicious day", "Ekadashi", "Purnima", "Amavasya", "Durga Puja"], searchIdle: "Enter a word or phrase to search.", searchLoading: "Searching dates…", searchCount: "matching days found", searchNone: "No matches in this period. Try another term or a longer range.", searchError: "Search failed. Check whether the server is running.", searchTithi: "Tithi", searchNakshatra: "Nakshatra", searchFestival: "Festival", searchNote: "‘Auspicious day’ results are preliminary candidates based on generally auspicious tithis in some traditions. They are not a complete muhurta calculation for marriage, housewarming, or another specific purpose."
+  }
+};
+
+const BN = {
+  weekdays: {Sunday:"রবিবার",Monday:"সোমবার",Tuesday:"মঙ্গলবার",Wednesday:"বুধবার",Thursday:"বৃহস্পতিবার",Friday:"শুক্রবার",Saturday:"শনিবার",Robibar:"রবিবার",Sombar:"সোমবার",Mongolbar:"মঙ্গলবার",Budhbar:"বুধবার",Brihoshpotibar:"বৃহস্পতিবার",Shukrobar:"শুক্রবার",Shonibar:"শনিবার"},
+  months: {Boishakh:"বৈশাখ",Joishtho:"জ্যৈষ্ঠ",Ashar:"আষাঢ়",Shrabon:"শ্রাবণ",Bhadro:"ভাদ্র",Ashwin:"আশ্বিন",Kartik:"কার্তিক",Agrahayan:"অগ্রহায়ণ",Poush:"পৌষ",Magh:"মাঘ",Falgun:"ফাল্গুন",Chaitro:"চৈত্র"},
+  tithi: {Pratipad:"প্রতিপদ",Dwitiya:"দ্বিতীয়া",Tritiya:"তৃতীয়া",Chaturthi:"চতুর্থী",Panchami:"পঞ্চমী",Sashthi:"ষষ্ঠী",Saptami:"সপ্তমী",Ashtami:"অষ্টমী",Navami:"নবমী",Dashami:"দশমী",Ekadashi:"একাদশী",Dwadashi:"দ্বাদশী",Trayodashi:"ত্রয়োদশী",Chaturdashi:"চতুর্দশী",Purnima:"পূর্ণিমা",Amavasya:"অমাবস্যা"},
+  paksha: {Shukla:"শুক্ল",Krishna:"কৃষ্ণ"},
+  nakshatra: {Ashwini:"অশ্বিনী",Bharani:"ভরণী",Krittika:"কৃত্তিকা",Rohini:"রোহিণী",Mrigashira:"মৃগশিরা",Ardra:"আর্দ্রা",Punarvasu:"পুনর্বসু",Pushya:"পুষ্যা",Ashlesha:"অশ্লেষা",Magha:"মঘা", "Purva Phalguni":"পূর্ব ফাল্গুনী", "Uttara Phalguni":"উত্তর ফাল্গুনী",Hasta:"হস্তা",Chitra:"চিত্রা",Swati:"স্বাতী",Vishakha:"বিশাখা",Anuradha:"অনুরাধা",Jyeshtha:"জ্যেষ্ঠা",Mula:"মূলা", "Purva Ashadha":"পূর্বাষাঢ়া", "Uttara Ashadha":"উত্তরাষাঢ়া",Shravana:"শ্রবণা",Dhanishtha:"ধনিষ্ঠা",Shatabhisha:"শতভিষা", "Purva Bhadrapada":"পূর্বভাদ্রপদ", "Uttara Bhadrapada":"উত্তরভাদ্রপদ",Revati:"রেবতী"},
+  yoga: {Vishkambha:"বিষ্কম্ভ",Priti:"প্রীতি",Ayushman:"আয়ুষ্মান",Saubhagya:"সৌভাগ্য",Shobhana:"শোভন",Atiganda:"অতিগণ্ড",Sukarma:"সুকর্মা",Dhriti:"ধৃতি",Shula:"শূল",Ganda:"গণ্ড",Vriddhi:"বৃদ্ধি",Dhruva:"ধ্রুব",Vyaghata:"ব্যাঘাত",Harshana:"হর্ষণ",Vajra:"বজ্র",Siddhi:"সিদ্ধি",Vyatipata:"ব্যতিপাত",Variyana:"বরীয়ান",Parigha:"পরিঘ",Shiva:"শিব",Siddha:"সিদ্ধ",Sadhya:"সাধ্য",Shubha:"শুভ",Shukla:"শুক্ল",Brahma:"ব্রহ্ম",Indra:"ইন্দ্র",Vaidhriti:"বৈধৃতি"},
+  karana: {Bava:"বব",Balava:"বালব",Kaulava:"কৌলব",Taitila:"তৈতিল",Garija:"গর",Vanija:"বণিজ",Vishti:"বিষ্টি",Shakuni:"শকুনি",Chatushpada:"চতুষ্পদ",Naga:"নাগ",Kimstughna:"কিংস্তুঘ্ন"},
+  rashi: {Mesha:"মেষ",Vrishabha:"বৃষ",Mithuna:"মিথুন",Karka:"কর্কট",Simha:"সিংহ",Kanya:"কন্যা",Tula:"তুলা",Vrischika:"বৃশ্চিক",Dhanu:"ধনু",Makara:"মকর",Kumbha:"কুম্ভ",Meena:"মীন"},
+  cities: {kolkata:"কলকাতা, ভারত",dhaka:"ঢাকা, বাংলাদেশ",delhi:"দিল্লি, ভারত",mumbai:"মুম্বাই, ভারত",bangalore:"বেঙ্গালুরু, ভারত",chennai:"চেন্নাই, ভারত",siliguri:"শিলিগুড়ি, ভারত",chittagong:"চট্টগ্রাম, বাংলাদেশ",london:"লন্ডন, যুক্তরাজ্য",new_york:"নিউ ইয়র্ক, যুক্তরাষ্ট্র",toronto:"টরন্টো, কানাডা",dubai:"দুবাই, সংযুক্ত আরব আমিরাত"}
+};
+const HOROSCOPE_TEMPLATES_EN = [
+"A good day to finish something you started rather than begin something new.",
+"Conversations with family bring clarity on a decision you've been sitting on.",
+"Financial caution serves you well today - avoid impulsive spending.",
+"An old connection may resurface. Worth answering that call.",
+"Your energy is best spent on routine tasks today rather than big risks.",
+"A small act of patience today prevents a bigger headache tomorrow.",
+"Good day for travel or short trips if you've been planning one.",
+"Trust your instincts in a work matter - overthinking won't help today.",
+"Health and rest deserve priority today over ambition.",
+"A creative idea you dismissed earlier deserves a second look.",
+"Someone close may need your listening ear more than your advice.",
+"Favorable day to settle a pending financial matter."
+];
+const HOROSCOPE_BN = [
+"নতুন কিছু শুরু করার বদলে আগে শুরু করা কাজটি শেষ করার দিকে মন দিন।",
+"পরিবারের সঙ্গে কথাবার্তা কোনও সিদ্ধান্ত নিয়ে আপনার ভাবনা পরিষ্কার করতে পারে।",
+"আজ অর্থের ব্যাপারে সতর্ক থাকুন এবং হঠাৎ খরচ এড়িয়ে চলুন।",
+"পুরনো কোনও পরিচিতের সঙ্গে আবার যোগাযোগ হতে পারে।",
+"আজ বড় ঝুঁকির বদলে নিয়মিত কাজগুলোতে মন দিলে ভালো হবে।",
+"আজ একটু ধৈর্য ধরলে আগামীকালের বড় ঝামেলা এড়ানো যেতে পারে।",
+"পরিকল্পনা করে থাকলে আজ ভ্রমণ বা ছোট সফরের কথা ভাবতে পারেন।",
+"কাজের বিষয়ে নিজের বিচারবুদ্ধির উপর ভরসা রাখুন; অতিরিক্ত ভাবনা এড়ান।",
+"আজ উচ্চাকাঙ্ক্ষার চেয়ে স্বাস্থ্য ও বিশ্রামকে অগ্রাধিকার দিন।",
+"আগে উপেক্ষা করা কোনও সৃজনশীল ভাবনা আবার ভেবে দেখতে পারেন।",
+"কাছের কারও আজ আপনার পরামর্শের চেয়ে মন দিয়ে শোনা বেশি প্রয়োজন হতে পারে।",
+"বাকি থাকা কোনও আর্থিক বিষয় মিটিয়ে নেওয়ার জন্য আজ সময় দিন।"
+];
+function localized(value, group) {
+  if (currentLang === 'en' || value == null) return value == null ? '' : String(value);
+  const map = BN[group];
+  if (!map) return String(value);
+  if (map[value]) return map[value];
+  return String(value).split(' ').map(part => map[part] || part).join(' ');
+}
+function cityLabel(city) { return currentLang === 'bn' ? (BN.cities[city.id] || city.label) : city.label; }
+
+let currentLang = localStorage.getItem('panjika_lang') || 'bn';
+if (!['bn','en'].includes(currentLang)) currentLang = 'bn';
+function t(key) { return STRINGS[currentLang][key]; }
+
+function toggleLang() {
+  currentLang = currentLang === 'bn' ? 'en' : 'bn';
+  localStorage.setItem('panjika_lang', currentLang);
+  applyStaticText();
+  renderCityOptions();
+  updateCityLabel();
+  if (lastData) render(lastData);
+  if (document.getElementById('month-view').style.display !== 'none') {
+    loadMonth(monthCursor.getFullYear(), monthCursor.getMonth() + 1);
+  }
+  if (document.getElementById('horoscope-view').style.display !== 'none') {
+    renderHoroscopeView();
+  }
+  if (document.getElementById('search-view').style.display !== 'none') {
+    renderSearchView();
+    if (lastSearchData) renderSearchResults(lastSearchData);
+  }
+}
+
+function applyStaticText() {
+  document.getElementById('lang-toggle-btn').textContent = currentLang === 'bn' ? 'EN' : 'বাং';
+  document.querySelector('.sub').textContent = t('subtitle');
+  document.getElementById('tab-day').textContent = t('tabToday');
+  document.getElementById('tab-month').textContent = t('tabMonth');
+  document.getElementById('tab-horoscope').textContent = t('tabRashifal');
+  document.getElementById('tab-search').textContent = t('tabSearch');
+  document.getElementById('app-footer').textContent = t('footer');
+  document.getElementById('city-search').placeholder = t('searchCity');
+  document.getElementById('city-picker-button').setAttribute('aria-label', t('chooseCity'));
+  document.documentElement.lang = currentLang;
+}
+
+let currentDate = new Date();
+let monthCursor = new Date();
+let selectedCity = localStorage.getItem('panjika_city') || 'kolkata';
+let cityList = [];
+
+function fmtDate(d) {
+  return d.toISOString().split('T')[0];
+}
+
+// ---- Theme ----
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-toggle-btn').textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  const next = current === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('panjika_theme', next);
+  applyTheme(next);
+}
+(function initTheme() {
+  const saved = localStorage.getItem('panjika_theme');
+  if (saved) { applyTheme(saved); }
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) { applyTheme('dark'); }
+})();
+
+// ---- Cities ----
+async function loadCities() {
+  const options = document.getElementById('city-options');
+  try {
+    const res = await fetch(`${API_BASE}/api/cities`, {cache:'no-store'});
+    if (!res.ok) throw new Error(`Cities request failed: ${res.status}`);
+    const data = await res.json();
+    cityList = Array.isArray(data.cities) ? data.cities : [];
+    if (!cityList.some(c => c.id === selectedCity)) selectedCity = 'kolkata';
+    renderCityOptions();
+    updateCityLabel();
+  } catch (e) {
+    options.innerHTML = `<div class="city-option">${currentLang === 'bn' ? 'শহরের তালিকা লোড করা যায়নি' : 'Could not load city list'}</div>`;
+    console.error('Could not load cities:', e);
+  }
+}
+function renderCityOptions(filter = '') {
+  const options = document.getElementById('city-options');
+  const query = filter.trim().toLocaleLowerCase();
+  const filtered = cityList.filter(c => `${cityLabel(c)} ${c.label} ${c.id}`.toLocaleLowerCase().includes(query));
+  options.innerHTML = filtered.map(c => `<button type="button" class="city-option" role="option" aria-selected="${c.id === selectedCity}" onclick="selectCity('${c.id}')">${cityLabel(c)}</button>`).join('') || `<div class="city-option">${currentLang === 'bn' ? 'কোনও শহর পাওয়া যায়নি' : 'No cities found'}</div>`;
+}
+function updateCityLabel() {
+  const city = cityList.find(c => c.id === selectedCity);
+  document.getElementById('selected-city-label').textContent = city ? cityLabel(city) : t('chooseCity');
+}
+function toggleCityMenu(force) {
+  const menu = document.getElementById('city-picker-menu');
+  const button = document.getElementById('city-picker-button');
+  const open = typeof force === 'boolean' ? force : !menu.classList.contains('open');
+  menu.classList.toggle('open', open);
+  button.setAttribute('aria-expanded', String(open));
+  if (open) {
+    document.getElementById('city-search').value = '';
+    renderCityOptions();
+    setTimeout(() => document.getElementById('city-search').focus(), 0);
+  }
+}
+function filterCities(value) { renderCityOptions(value); }
+function selectCity(cityId) {
+  if (!cityList.some(c => c.id === cityId)) return;
+  selectedCity = cityId;
+  localStorage.setItem('panjika_city', selectedCity);
+  updateCityLabel();
+  toggleCityMenu(false);
+  loadPanchang(fmtDate(currentDate));
+  if (document.getElementById('month-view').style.display !== 'none') loadMonth(monthCursor.getFullYear(), monthCursor.getMonth() + 1);
+}
+document.addEventListener('click', event => {
+  const picker = document.getElementById('city-picker');
+  if (picker && !picker.contains(event.target)) toggleCityMenu(false);
+});
+
+// ---- Day view ----
+async function loadPanchang(dateStr) {
+  const el = document.getElementById('content');
+  el.innerHTML = `<div class="loading">${t('loading')}</div>`;
+  try {
+    const res = await fetch(`${API_BASE}/api/panchang?date=${dateStr}&city=${selectedCity}`, {cache:'no-store'});
+    if (!res.ok) throw new Error(`Panchang request failed: ${res.status}`);
+    const data = await res.json();
+    render(data);
+  } catch (e) {
+    el.innerHTML = `<div class="loading">${t('loadError')}</div>`;
+  }
+}
+
+let lastData = null;
+
+function render(data) {
+  lastData = data;
+  const el = document.getElementById('content');
+  const bn = data.bengali_date;
+  const festivalHtml = data.festival
+    ? `<div class="festival-banner" onclick="showFestivalModal()">🪔 ${data.festival}</div>`
+    : '';
+  const ekadashiHtml = data.ekadashi.is_ekadashi
+    ? `<div class="ekadashi-banner">🪔 ${localized(data.ekadashi.paksha, 'paksha')} ${t('ekadashiToday')}</div>`
+    : '';
+
+  el.innerHTML = `
+    <div class="big-date-card">
+      <div class="bengali-date">${bn.day} ${localized(bn.month, 'months')}, ${bn.bengali_year}</div>
+      <div class="gregorian-date">${data.gregorian_date} · ${localized(data.weekday, 'weekdays')}</div>
+      <div class="weekday-pill">${localized(data.weekday_bengali, 'weekdays')}</div>
+    </div>
+    ${festivalHtml}
+    ${ekadashiHtml}
+
+    <div class="nav-row">
+      <button class="nav-btn" onclick="changeDay(-1)">‹</button>
+      <div style="font-size:0.85rem;color:var(--text-soft)">${t('swipeDays')}</div>
+      <button class="nav-btn" onclick="changeDay(1)">›</button>
+    </div>
+
+    <div class="grid">
+      <div class="stat-card">
+        <div class="stat-label">${t('tithi')}</div>
+        <div class="stat-value">${localized(data.tithi.name, 'tithi')}</div>
+        <div class="stat-detail">${localized(data.tithi.paksha, 'paksha')} ${t('paksha')} · ${data.tithi.percent_complete}% ${t('elapsed')}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${t('nakshatra')}</div>
+        <div class="stat-value">${localized(data.nakshatra.name, 'nakshatra')}</div>
+        <div class="stat-detail">${t('pada')} ${data.nakshatra.pada}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${t('yoga')}</div>
+        <div class="stat-value">${localized(data.yoga.name, 'yoga')}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">${t('karana')}</div>
+        <div class="stat-value">${localized(data.karana.name, 'karana')}</div>
+      </div>
+    </div>
+
+    <div class="sun-row">
+      <div class="sun-item">
+        <div class="label">${t('sunrise')}</div>
+        <div class="value">${data.sunrise || '—'}</div>
+      </div>
+      <div class="sun-item">
+        <div class="label">${t('moonRashi')}</div>
+        <div class="value">${localized(data.moon_rashi.name.split(' ')[0], 'rashi')}</div>
+      </div>
+      <div class="sun-item">
+        <div class="label">${t('sunset')}</div>
+        <div class="value">${data.sunset || '—'}</div>
+      </div>
+    </div>
+
+    <div class="section-title">${t('timings')}</div>
+    <div class="time-window-row">
+      <div class="time-window-card warn">
+        <div class="tw-label">${t('rahuKaal')}</div>
+        <div class="tw-value">${data.rahu_kaal.start || '—'} – ${data.rahu_kaal.end || '—'}</div>
+      </div>
+      <div class="time-window-card">
+        <div class="tw-label">${t('abhijitMuhurat')}</div>
+        <div class="tw-value">${data.abhijit_muhurat.start || '—'} – ${data.abhijit_muhurat.end || '—'}</div>
+        <div class="tw-note">${t('abhijitNote')}</div>
+      </div>
+    </div>
+
+    <button class="share-btn" onclick="shareDay()">${t('shareBtn')}</button>
+  `;
+}
+
+function showFestivalModal() {
+  if (!lastData || !lastData.festival) return;
+  const root = document.getElementById('modal-root');
+  root.innerHTML = `
+    <div class="modal-overlay" onclick="closeModal(event)">
+      <div class="modal-sheet" onclick="event.stopPropagation()">
+        <h3>🪔 ${lastData.festival}</h3>
+        <p style="color:var(--text-soft);font-size:0.9rem;line-height:1.5">
+          ${lastData.bengali_date.day} ${localized(lastData.bengali_date.month, 'months')}, ${lastData.bengali_date.bengali_year} ·
+          ${localized(lastData.tithi.name, 'tithi')} (${localized(lastData.tithi.paksha, 'paksha')} ${t('paksha')})
+        </p>
+        <button class="modal-close" onclick="closeModal()">${t('close')}</button>
+      </div>
+    </div>
+  `;
+}
+function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+
+function shareDay() {
+  if (!lastData) return;
+  const bn = lastData.bengali_date;
+  const text = currentLang === 'bn' ? `${bn.day} ${localized(bn.month,'months')} ${bn.bengali_year} (${lastData.gregorian_date})\nতিথি: ${localized(lastData.tithi.name,'tithi')}\nনক্ষত্র: ${localized(lastData.nakshatra.name,'nakshatra')}${lastData.festival ? '\n🪔 ' + lastData.festival : ''}` : `${bn.day} ${bn.month} ${bn.bengali_year} (${lastData.gregorian_date})\nTithi: ${lastData.tithi.name}\nNakshatra: ${lastData.nakshatra.name}${lastData.festival ? '\n🪔 ' + lastData.festival : ''}`;
+  if (navigator.share) {
+    navigator.share({ title: 'Panjika', text });
+  } else {
+    navigator.clipboard.writeText(text);
+    alert(t('copied'));
+  }
+}
+
+function changeDay(delta) {
+  currentDate.setDate(currentDate.getDate() + delta);
+  loadPanchang(fmtDate(currentDate));
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js').catch(() => {});
+}
+
+// ---- Tabs ----
+function switchTab(tab) {
+  ['day','month','horoscope','search'].forEach(name => {
+    const button = document.getElementById(`tab-${name}`);
+    if (button) button.classList.toggle('active', name === tab);
+  });
+  document.getElementById('content').style.display = tab === 'day' ? 'block' : 'none';
+  document.getElementById('month-view').style.display = tab === 'month' ? 'block' : 'none';
+  document.getElementById('horoscope-view').style.display = tab === 'horoscope' ? 'block' : 'none';
+  document.getElementById('search-view').style.display = tab === 'search' ? 'block' : 'none';
+  if (tab === 'month') loadMonth(monthCursor.getFullYear(), monthCursor.getMonth() + 1);
+  if (tab === 'horoscope') renderHoroscopeView();
+  if (tab === 'search') renderSearchView();
+}
+
+async function loadMonth(year, month) {
+  const el = document.getElementById('month-view');
+  el.innerHTML = `<div class="loading">${t('loadingMonth')}</div>`;
+  try {
+    const res = await fetch(`${API_BASE}/api/month?year=${year}&month=${month}&city=${selectedCity}`, {cache:'no-store'});
+    if (!res.ok) throw new Error(`Month request failed: ${res.status}`);
+    const data = await res.json();
+    renderMonth(data);
+  } catch (e) {
+    el.innerHTML = `<div class="loading">${t('monthError')}</div>`;
+  }
+}
+
+function renderMonth(data) {
+  const el = document.getElementById('month-view');
+  const first = new Date(data.year, data.month - 1, 1);
+  const startDow = first.getDay();
+  const monthName = first.toLocaleString(currentLang === 'bn' ? 'bn-BD' : 'en-US', { month: 'long' });
+
+  let cells = '';
+  for (let i = 0; i < startDow; i++) cells += '<div class="day-cell empty-cell"></div>';
+  data.days.forEach(day => {
+    const dayNum = day.date.split('-')[2];
+    const cls = day.festival ? 'day-cell festival' : 'day-cell';
+    cells += `
+      <div class="${cls}">
+        ${day.festival ? '<div class="dot"></div>' : ''}
+        <div class="greg">${parseInt(dayNum)}</div>
+        <div class="bn">${day.bengali_day} ${currentLang === 'bn' ? localized(day.bengali_month, 'months') : day.bengali_month.slice(0,3)}</div>
+        <div class="bn">${localized(day.tithi, 'tithi')}</div>
+      </div>`;
+  });
+
+  el.innerHTML = `
+    <div class="month-header">
+      <button class="nav-btn" onclick="changeMonth(-1)">‹</button>
+      <div class="label">${monthName} ${data.year}</div>
+      <button class="nav-btn" onclick="changeMonth(1)">›</button>
+    </div>
+    <div class="month-grid">
+      ${t('weekdays').map(d => `<div class="dow">${d}</div>`).join('')}
+      ${cells}
+    </div>
+  `;
+}
+
+function changeMonth(delta) {
+  monthCursor.setMonth(monthCursor.getMonth() + delta);
+  loadMonth(monthCursor.getFullYear(), monthCursor.getMonth() + 1);
+}
+
+// ---- Search all matching days in the selected future range ----
+let lastSearchData = null;
+let lastSearchQuery = '';
+function renderSearchView() {
+  const el = document.getElementById('search-view');
+  const oldQuery = document.getElementById('day-search-input')?.value || lastSearchQuery;
+  const oldRange = document.getElementById('day-search-range')?.value || '365';
+  el.innerHTML = `
+    <section class="search-panel">
+      <h2 class="search-heading">${t('searchTitle')}</h2>
+      <p class="search-help">${t('searchHelp')}</p>
+      <form class="day-search-form" onsubmit="submitDaySearch(event)">
+        <input id="day-search-input" class="day-search-input" type="search" maxlength="100" autocomplete="off" placeholder="${t('searchPlaceholder')}" value="${escapeHtml(oldQuery)}" aria-label="${t('searchTitle')}">
+        <button class="day-search-submit" type="submit">${t('searchButton')}</button>
+      </form>
+      <div class="search-controls"><label for="day-search-range">${t('searchRange')}</label>
+        <select class="search-range" id="day-search-range">
+          <option value="90">${t('searchDays90')}</option><option value="180">${t('searchDays180')}</option><option value="365">${t('searchDays365')}</option>
+        </select>
+      </div>
+      <div class="search-examples">${t('searchExamples').map(example => `<button class="search-chip" type="button" onclick="searchExample('${escapeHtml(example)}')">${example}</button>`).join('')}</div>
+      <div class="search-note">${t('searchNote')}</div>
+    </section>
+    <div id="day-search-results"><div class="search-empty">${t('searchIdle')}</div></div>`;
+  document.getElementById('day-search-range').value = oldRange;
+  if (lastSearchData && oldQuery) renderSearchResults(lastSearchData);
+}
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+}
+function searchExample(term) {
+  const input = document.getElementById('day-search-input');
+  if (input) input.value = term;
+  submitDaySearch(new Event('submit', {cancelable:true}));
+}
+async function submitDaySearch(event) {
+  if (event) event.preventDefault();
+  const input = document.getElementById('day-search-input');
+  const q = (input?.value || '').trim();
+  const days = document.getElementById('day-search-range')?.value || '365';
+  const resultsEl = document.getElementById('day-search-results');
+  if (!q) { resultsEl.innerHTML = `<div class="search-empty">${t('searchIdle')}</div>`; return; }
+  lastSearchQuery = q;
+  resultsEl.innerHTML = `<div class="search-empty">${t('searchLoading')}</div>`;
+  try {
+    const params = new URLSearchParams({q, days, city:selectedCity, start:fmtDate(new Date())});
+    const response = await fetch(`${API_BASE}/api/search-days?${params.toString()}`, {cache:'no-store'});
+    if (!response.ok) throw new Error(`Search request failed: ${response.status}`);
+    lastSearchData = await response.json();
+    renderSearchResults(lastSearchData);
+  } catch (error) {
+    console.error(error);
+    resultsEl.innerHTML = `<div class="search-empty">${t('searchError')}</div>`;
+  }
+}
+function renderSearchResults(data) {
+  const resultsEl = document.getElementById('day-search-results');
+  if (!resultsEl) return;
+  const results = data.results || [];
+  const heading = `<div class="search-results-head"><h3>${data.count} ${t('searchCount')}</h3><span class="search-result-bn">${data.start} · ${data.days_scanned} ${currentLang === 'bn' ? 'দিন' : 'days'}</span></div>`;
+  if (!results.length) { resultsEl.innerHTML = heading + `<div class="search-empty">${t('searchNone')}</div>`; return; }
+  const cards = results.map(item => {
+    const bnMonth = localized(item.bengali_month, 'months');
+    const tithi = currentLang === 'bn' ? item.tithi_bn : item.tithi;
+    const nakshatra = currentLang === 'bn' ? item.nakshatra_bn : item.nakshatra;
+    const weekday = currentLang === 'bn' ? item.weekday_bn : item.weekday;
+    const dateLabel = new Date(`${item.date}T12:00:00`).toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-GB', {day:'numeric', month:'long', year:'numeric', weekday:'long'});
+    const festival = item.festival ? `<div class="search-result-tag">🪔 ${escapeHtml(item.festival)}</div>` : '';
+    const reason = item.auspicious_candidate ? (currentLang === 'bn' ? `সাধারণ শুভ তিথির প্রার্থী · ${tithi}` : `General auspicious-tithi candidate · ${tithi}`) : escapeHtml(item.reason || '');
+    return `<article class="search-result-card"><div class="search-result-top"><div><div class="search-result-date">${escapeHtml(dateLabel)}</div><div class="search-result-bn">${item.bengali_day} ${escapeHtml(bnMonth)}, ${item.bengali_year} · ${escapeHtml(item.date)}</div></div></div><div class="search-result-meta"><strong>${t('searchTithi')}:</strong> ${escapeHtml(tithi)} (${escapeHtml(item.paksha)})<br><strong>${t('searchNakshatra')}:</strong> ${escapeHtml(nakshatra)} · ${escapeHtml(weekday)}</div>${festival}<div class="search-result-meta">${reason}</div><button class="search-chip" type="button" style="margin-top:10px" onclick="openSearchDate('${item.date}')">${currentLang === 'bn' ? 'এই দিনের পঞ্জিকা দেখুন' : 'View this day'}</button></article>`;
+  }).join('');
+  resultsEl.innerHTML = heading + `<div class="search-result-list">${cards}</div>`;
+}
+function openSearchDate(dateStr) {
+  currentDate = new Date(`${dateStr}T12:00:00`);
+  switchTab('day');
+  loadPanchang(dateStr);
+}
+
+// ---- Rashifal (horoscope) tab ----
+const RASHI_LIST = ["Mesha (Aries)", "Vrishabha (Taurus)", "Mithuna (Gemini)", "Karka (Cancer)", "Simha (Leo)", "Kanya (Virgo)", "Tula (Libra)", "Vrischika (Scorpio)", "Dhanu (Sagittarius)", "Makara (Capricorn)", "Kumbha (Aquarius)", "Meena (Pisces)"];
+const RASHI_BN = ["মেষ", "বৃষ", "মিথুন", "কর্কট", "সিংহ", "কন্যা", "তুলা", "বৃশ্চিক", "ধনু", "মকর", "কুম্ভ", "মীন"];
+let selectedRashiIdx = parseInt(localStorage.getItem('panjika_rashi') || '0');
+
+function renderHoroscopeView() {
+  const el = document.getElementById('horoscope-view');
+  const chips = RASHI_LIST.map((r, i) =>
+    `<div class="rashi-chip ${i === selectedRashiIdx ? 'active' : ''}" onclick="selectRashi(${i})">${currentLang === 'bn' ? RASHI_BN[i] : r}</div>`
+  ).join('');
+  el.innerHTML = `
+    <div class="section-title">${t('pickRashi')}</div>
+    <div class="rashi-row">${chips}</div>
+    <div class="horoscope-card">
+      <div class="horoscope-rashi">${currentLang === 'bn' ? RASHI_BN[selectedRashiIdx] : RASHI_LIST[selectedRashiIdx]}</div>
+      <div class="horoscope-text" id="horoscope-text">…</div>
+
+    </div>
+  `;
+  loadHoroscopeFor(selectedRashiIdx);
+}
+
+function selectRashi(idx) {
+  selectedRashiIdx = idx;
+  localStorage.setItem('panjika_rashi', idx);
+  renderHoroscopeView();
+}
+
+async function loadHoroscopeFor(rashiIdx) {
+  try {
+    const res = await fetch(`${API_BASE}/api/horoscope?rashi=${rashiIdx}&date=${fmtDate(new Date())}`, {cache:'no-store'});
+    if (!res.ok) throw new Error(`Horoscope request failed: ${res.status}`);
+    const data = await res.json();
+    const idx = HOROSCOPE_TEMPLATES_EN.indexOf(data.message);
+    document.getElementById('horoscope-text').textContent = currentLang === 'bn' ? (HOROSCOPE_BN[idx] || data.message) : data.message;
+  } catch (e) {
+    document.getElementById('horoscope-text').textContent = currentLang === 'bn' ? 'তথ্য লোড করা যায়নি।' : 'Could not load.';
+  }
+}
+
+// ---- Init ----
+applyStaticText();
+document.getElementById('content').textContent = t('loadingToday');
+loadCities().then(() => {
+  updateCityLabel();
+  loadPanchang(fmtDate(currentDate));
+});
+</script>
+</body>
+</html>
