@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Version bumped to force browsers to discard the stale English-first shell.
 const CACHE_NAME = "panjika-v4-day-search";
 const SHELL = ["/", "/manifest.json"];
@@ -37,26 +36,4 @@ self.addEventListener("fetch", (event) => {
       return (await caches.match(event.request)) || Response.error();
     }
   })());
-=======
-const CACHE_NAME = "panjika-v1";
-const SHELL = ["/", "/manifest.json"];
-
-self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(SHELL))
-  );
-});
-
-self.addEventListener("fetch", (event) => {
-  if (event.request.url.includes("/api/")) {
-    // Network-first for API calls (data should be fresh)
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
-    );
-  } else {
-    event.respondWith(
-      caches.match(event.request).then((cached) => cached || fetch(event.request))
-    );
-  }
->>>>>>> origin/main
 });

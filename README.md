@@ -28,10 +28,7 @@ Once you're happy with how this looks and behaves:
 4. Run: bubblewrap init --manifest=https://yourdomain.com/manifest.json
 5. Run: bubblewrap build
    -> this generates app-release.aab, ready for Play Console upload
-<<<<<<< HEAD
 
 
 ## Find days search
 The Bengali-first interface includes a “শুভ দিন খুঁজুন” search tab. It searches up to the next year (or the selected 3/6/12-month range) for tithis, nakshatras, festivals, weekdays, and Bengali calendar terms. “শুভ দিন” returns broad traditional tithi candidates only; it is not a purpose-specific muhurta calculator.
-=======
->>>>>>> origin/main

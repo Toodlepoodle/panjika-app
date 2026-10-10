@@ -10,11 +10,7 @@ from fastapi.responses import FileResponse
 from datetime import datetime, timedelta
 import calendar as pycalendar
 
-<<<<<<< HEAD
 from panchang import get_full_panchang, gregorian_to_bengali_date, get_festival, CITIES, get_horoscope, RASHI_NAMES
-=======
-from panchang import get_full_panchang, gregorian_to_bengali_date, get_festival
->>>>>>> origin/main
 
 app = FastAPI(title="Panjika API")
 
@@ -31,7 +27,6 @@ DEFAULT_LON = 88.3639
 DEFAULT_TZ = "Asia/Kolkata"
 
 
-<<<<<<< HEAD
 @app.get("/api/horoscope")
 def api_horoscope(
     rashi: int = Query(..., ge=0, le=11, description="Rashi index 0=Mesha..11=Meena"),
@@ -59,23 +54,15 @@ def api_cities():
 def api_panchang(
     date: str = Query(default=None, description="YYYY-MM-DD, defaults to today"),
     city: str = Query(default=None, description="City id from /api/cities, overrides lat/lon/tz"),
-=======
-@app.get("/api/panchang")
-def api_panchang(
-    date: str = Query(default=None, description="YYYY-MM-DD, defaults to today"),
->>>>>>> origin/main
     lat: float = Query(default=DEFAULT_LAT),
     lon: float = Query(default=DEFAULT_LON),
     tz: str = Query(default=DEFAULT_TZ),
 ):
     """Get full panchang for a single date."""
-<<<<<<< HEAD
     if city and city in CITIES:
         c = CITIES[city]
         lat, lon, tz = c["lat"], c["lon"], c["tz"]
 
-=======
->>>>>>> origin/main
     if date:
         d = datetime.strptime(date, "%Y-%m-%d")
     else:
@@ -89,21 +76,15 @@ def api_panchang(
 def api_month(
     year: int = Query(...),
     month: int = Query(..., ge=1, le=12),
-<<<<<<< HEAD
     city: str = Query(default=None),
-=======
->>>>>>> origin/main
     lat: float = Query(default=DEFAULT_LAT),
     lon: float = Query(default=DEFAULT_LON),
     tz: str = Query(default=DEFAULT_TZ),
 ):
     """Get a lightweight panchang summary (tithi + bengali date only) for every day in a Gregorian month."""
-<<<<<<< HEAD
     if city and city in CITIES:
         c = CITIES[city]
         lat, lon, tz = c["lat"], c["lon"], c["tz"]
-=======
->>>>>>> origin/main
     days_in_month = pycalendar.monthrange(year, month)[1]
     results = []
     for day in range(1, days_in_month + 1):
@@ -122,7 +103,6 @@ def api_month(
     return {"year": year, "month": month, "days": results}
 
 
-<<<<<<< HEAD
 
 
 # Search terms that people commonly use in Bengali or English.
@@ -217,7 +197,5 @@ def api_search_days(
             "mode": "auspicious_candidates" if is_auspicious_search else "text_search"}
 
 
-=======
->>>>>>> origin/main
 # Serve the frontend
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
